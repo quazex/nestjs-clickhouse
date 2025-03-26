@@ -1,0 +1,72 @@
+{
+  "name": "@quazex/nestjs-clickhouse",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/quazex/nestjs-clickhouse.git"
+  },
+  "description": "NestJS module for ClickHouse client",
+  "version": "1.0.0",
+  "author": "Alexander Smirnov",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 20.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**"
+  ],
+  "keywords": [
+    "clickhouse",
+    "nestjs",
+    "nest",
+    "typescript",
+    "nodejs",
+    "node"
+  ],
+  "scripts": {
+    "build:clear": "rimraf lib",
+    "build:compile": "npm run build:clear && tsc --project tsconfig.build.json",
+    "dev:watch": "tsc --watch",
+    "dev:check": "tsc --noEmit",
+    "dev:lint": "eslint ./source --ext .ts",
+    "dev:format": "npm run dev:lint -- --fix",
+    "dev:test": "jest",
+    "commit": "git-cz",
+    "release": "semantic-release",
+    "prepare": "husky"
+  },
+  "peerDependencies": {
+    "@nestjs/common": ">=9.0.0 <11.0.0",
+    "@clickhouse/client": ">=1.0.0 <2.0.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "9.6.0",
+    "@jest/globals": "29.7.0",
+    "@nestjs/common": "10.4.15",
+    "@nestjs/testing": "10.4.15",
+    "@clickhouse/client": "1.11.0",
+    "@quazex/eslint-config": "1.0.2",
+    "@semantic-release/git": "10.0.1",
+    "@types/luxon": "3.4.2",
+    "commitizen": "4.3.1",
+    "cz-conventional-changelog": "3.3.0",
+    "husky": "9.1.7",
+    "jest": "29.7.0",
+    "luxon": "3.6.0",
+    "rimraf": "6.0.1",
+    "semantic-release": "24.2.3",
+    "testcontainers": "10.22.0",
+    "ts-jest": "29.3.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.8.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+npm run dev:check
+npm run dev:lint
+npm run dev:test
