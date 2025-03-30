@@ -29,7 +29,7 @@ import { ClickHouseModule } from '@quazex/nestjs-clickhouse';
   imports: [
     ClickHouseModule.forRoot({
         name: 'my-clickhouse', // optional
-        url: 'https://localhost:9200',
+        url: 'https://localhost:8123',
         username: 'your-username',
         password: 'your-password',
         database: 'your-database',
@@ -41,16 +41,16 @@ export class AppModule {}
 
 ### Using ClickHouse Service
 
-Once the module is registered, you can inject the `ClickHouseService` into your providers or controllers:
+Once the module is registered, you can inject instance of `ClickHouseClient` into your providers:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { Client } from '@clickhouse/client';
+import { ClickHouseClient } from '@clickhouse/client';
 import { InjectClickHouse } from '@quazex/nestjs-clickhouse';
 
 @Injectable()
 export class DatabaseService {
-    constructor(@InjectClickHouse() private readonly clickHouseClient: Client) {}
+    constructor(@InjectClickHouse() private readonly clickHouseClient: ClickHouseClient) {}
 
     async insert(table: string, body: any) {
         await this.clickHouseClient.insert({
@@ -113,12 +113,12 @@ await app.listen(appConfig.port, '0.0.0.0');
 ```typescript
 // app.bootstrap.ts
 import { Injectable, OnApplicationShutdown } from '@nestjs/common';
-import { Client } from '@clickhouse/client';
+import { ClickHouseClient } from '@clickhouse/client';
 import { InjectClickHouse } from '@quazex/nestjs-clickhouse';
 
 @Injectable()
 export class AppBootstrap implements OnApplicationShutdown {
-    constructor(@InjectClickHouse() private readonly clickHouseClient: Client) {}
+    constructor(@InjectClickHouse() private readonly clickHouseClient: ClickHouseClient) {}
 
     public async onApplicationShutdown(): Promise<void> {
         await this.client.close();
@@ -129,4 +129,3 @@ export class AppBootstrap implements OnApplicationShutdown {
 ## License
 
 MIT
-

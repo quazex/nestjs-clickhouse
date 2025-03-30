@@ -10,6 +10,6 @@ export class ClickHouseUtilities {
     }
 
     public static getClientToken(name?: string): string {
-        return this.getCommon('index', name);
+        return this.getCommon('table', name);
     }
 }
