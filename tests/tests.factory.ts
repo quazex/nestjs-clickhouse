@@ -21,6 +21,9 @@ export class TestingClickHouseFactory {
         const tProvider: FactoryProvider<TestingClickHouseService> = {
             provide: this._token,
             useFactory: (client: ClickHouseClient) => ({
+                onApplicationShutdown: async(): Promise<void> => {
+                    await client.close();
+                },
                 exec: async(command): Promise<void> => {
                     await client.command({
                         query: command,
@@ -65,6 +68,7 @@ export class TestingClickHouseFactory {
         });
 
         this._testing = await tModule.compile();
+        this._testing.enableShutdownHooks();
 
         const service = this.getService();
         await service.exec(`
@@ -80,10 +84,6 @@ export class TestingClickHouseFactory {
     }
 
     public async close(): Promise<void> {
-        const token = ClickHouseUtilities.getClientToken();
-        const client = this._testing.get<ClickHouseClient>(token);
-
-        await client.close();
         await this._testing.close();
         await this._container.stop();
     }

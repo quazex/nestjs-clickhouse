@@ -121,7 +121,7 @@ export class AppBootstrap implements OnApplicationShutdown {
     constructor(@InjectClickHouse() private readonly clickHouseClient: ClickHouseClient) {}
 
     public async onApplicationShutdown(): Promise<void> {
-        await this.client.close();
+        await this.clickHouseClient.close();
     }
 }
 ```
