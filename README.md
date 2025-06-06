@@ -25,14 +25,14 @@ import { Module } from '@nestjs/common';
 import { ClickHouseModule } from '@quazex/nestjs-clickhouse';
 
 @Module({
-  imports: [
-    ClickHouseModule.forRoot({
-        url: 'https://localhost:8123',
-        username: 'your-username',
-        password: 'your-password',
-        database: 'your-database',
-    }),
-  ],
+    imports: [
+        ClickHouseModule.forRoot({
+            url: 'https://localhost:8123',
+            username: 'your-username',
+            password: 'your-password',
+            database: 'your-database',
+        }),
+    ],
 })
 export class AppModule {}
 ```
@@ -80,14 +80,14 @@ import { ClickHouseModule } from '@quazex/nestjs-clickhouse';
 @Module({
     imports: [
         ClickHouseModule.forRootAsync({
-            useFactory: async (config) => ({
-                url: process.env.CLICKHOUSE_URL,
-                username: process.env.CLICKHOUSE_USERNAME,
-                password: process.env.CLICKHOUSE_PASSWORD,
-                database: process.env.CLICKHOUSE_DATABASE,
+            useFactory: async (config: SomeConfigProvider) => ({
+                url: config.CLICKHOUSE_URL,
+                username: config.CLICKHOUSE_USERNAME,
+                password: config.CLICKHOUSE_PASSWORD,
+                database: config.CLICKHOUSE_DATABASE,
             }),
             inject: [
-                ConfigProvider,
+                SomeConfigProvider,
             ],
         }),
     ],
@@ -101,7 +101,12 @@ By default, this module doesn't manage client connection on application shutdown
 
 ```typescript
 // main.ts
+const app = await NestFactory.create(AppModule);
+
+// Starts listening for shutdown hooks
 app.enableShutdownHooks(); // <<<
+
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 ```typescript
