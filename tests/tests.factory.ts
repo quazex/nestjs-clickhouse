@@ -2,21 +2,21 @@ import { ClickHouseClient } from '@clickhouse/client';
 import { faker } from '@faker-js/faker';
 import { FactoryProvider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ClickHouseContainer, StartedClickHouseContainer } from '@testcontainers/clickhouse';
 import { ClickHouseModule } from '../source/clickhouse.module';
-import { ClickHouseUtilities } from '../source/clickhouse.utilities';
-import { ClickHouseContainerGeneric, ClickHouseContainerStarted } from './tests.container';
+import { ClickHouseTokens } from '../source/clickhouse.tokens';
 import { TestingClickHouseService, TestingData } from './tests.types';
 
 export class TestingClickHouseFactory {
     private _testing: TestingModule;
-    private _container: ClickHouseContainerStarted;
+    private _container: StartedClickHouseContainer;
 
     private _token = faker.string.alpha({ length: 10 });
     private _table = faker.string.alpha({ length: 10, casing: 'lower' });
 
     public async init(): Promise<void> {
-        const tContainer = new ClickHouseContainerGeneric();
-        this._container = await tContainer.start();
+        const tContainer = new ClickHouseContainer();
+        this._container = await tContainer.withReuse().start();
 
         const tProvider: FactoryProvider<TestingClickHouseService> = {
             provide: this._token,
@@ -49,17 +49,17 @@ export class TestingClickHouseFactory {
                 },
             }),
             inject: [
-                ClickHouseUtilities.getClientToken(),
+                ClickHouseTokens.getClient(),
             ],
         };
 
         const tModule = Test.createTestingModule({
             imports: [
                 ClickHouseModule.forRoot({
-                    url: this._container.getUrl(),
-                    username: tContainer.options.username,
-                    password: tContainer.options.password,
-                    database: tContainer.options.database,
+                    url: this._container.getHttpUrl(),
+                    username: this._container.getUsername(),
+                    password: this._container.getPassword(),
+                    database: this._container.getDatabase(),
                 }),
             ],
             providers: [
@@ -68,10 +68,11 @@ export class TestingClickHouseFactory {
         });
 
         this._testing = await tModule.compile();
+        this._testing = await this._testing.init();
+
         this._testing.enableShutdownHooks();
 
-        const service = this.getService();
-        await service.exec(`
+        await this.service.exec(`
             CREATE TABLE ${this._table}
             (
                 id UUID,
@@ -88,7 +89,7 @@ export class TestingClickHouseFactory {
         await this._container.stop();
     }
 
-    public getService(): TestingClickHouseService {
+    public get service(): TestingClickHouseService {
         return this._testing.get<TestingClickHouseService>(this._token);
     }
 }

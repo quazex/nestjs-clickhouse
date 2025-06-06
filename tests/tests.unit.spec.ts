@@ -80,7 +80,6 @@ describe('ClickHouse > Unit', () => {
                 ClickHouseModule.forRootAsync({
                     imports: [ConfigModule],
                     useExisting: ClickHouseConfig,
-                    name: faker.string.alpha({ length: 10 }),
                 }),
             ],
         });

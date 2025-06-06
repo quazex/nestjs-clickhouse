@@ -6,7 +6,6 @@ export interface ClickHouseOptionsFactory {
 }
 
 export interface ClickHouseAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-    name?: string;
     inject?: Array<InjectionToken | OptionalFactoryDependency>;
     useExisting?: Type<ClickHouseOptionsFactory>;
     useFactory?: (...args: any[]) => Promise<ClickHouseClientConfigOptions> | ClickHouseClientConfigOptions;

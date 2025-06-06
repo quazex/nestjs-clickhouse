@@ -3,7 +3,6 @@
 Core features:
 
 - Based on [official ClickHouse client for NodeJS](https://github.com/ClickHouse/clickhouse-js);
-- Supports multiple instances;
 - Covered with unit and e2e tests;
 - Basic module without unnecessary boilerplate.
 
@@ -28,7 +27,6 @@ import { ClickHouseModule } from '@quazex/nestjs-clickhouse';
 @Module({
   imports: [
     ClickHouseModule.forRoot({
-        name: 'my-clickhouse', // optional
         url: 'https://localhost:8123',
         username: 'your-username',
         password: 'your-password',
@@ -50,10 +48,10 @@ import { InjectClickHouse } from '@quazex/nestjs-clickhouse';
 
 @Injectable()
 export class DatabaseService {
-    constructor(@InjectClickHouse() private readonly clickHouseClient: ClickHouseClient) {}
+    constructor(@InjectClickHouse() private readonly client: ClickHouseClient) {}
 
     async insert(table: string, body: any) {
-        await this.clickHouseClient.insert({
+        await this.client.insert({
             format: 'JSONEachRow',
             table: table,
             values: body,
@@ -61,11 +59,11 @@ export class DatabaseService {
     }
 
     async search(table: string) {
-        const response = await this.clickHouseClient.query({
+        const response = await this.client.query({
             format: 'JSONEachRow',
             query: `SELECT * FROM ${table}`,
         });
-        const rows = await response.json<object>();
+        const rows = await response.json();
         return rows;
     }
 }
@@ -76,15 +74,21 @@ export class DatabaseService {
 If you need dynamic configuration, use `forRootAsync`:
 
 ```typescript
+import { Module } from '@nestjs/common';
+import { ClickHouseModule } from '@quazex/nestjs-clickhouse';
+
 @Module({
     imports: [
         ClickHouseModule.forRootAsync({
-            useFactory: async () => ({
+            useFactory: async (config) => ({
                 url: process.env.CLICKHOUSE_URL,
                 username: process.env.CLICKHOUSE_USERNAME,
                 password: process.env.CLICKHOUSE_PASSWORD,
                 database: process.env.CLICKHOUSE_DATABASE,
             }),
+            inject: [
+                ConfigProvider,
+            ],
         }),
     ],
 })
@@ -93,21 +97,11 @@ export class AppModule {}
 
 ### Graceful shutdown
 
-By default, this module doesn't manage client connection on application shutdown. You can read more about lifecycle hooks on the NestJS [documentation page](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown). 
+By default, this module doesn't manage client connection on application shutdown. You can read more about lifecycle hooks on the NestJS [documentation page](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown).
 
 ```typescript
 // main.ts
-const app = await NestFactory.create(AppModule);
-
-app.useLogger(logger);
 app.enableShutdownHooks(); // <<<
-
-app.setGlobalPrefix('api');
-app.enableVersioning({
-    type: VersioningType.URI,
-});
-
-await app.listen(appConfig.port, '0.0.0.0');
 ```
 
 ```typescript
@@ -118,10 +112,10 @@ import { InjectClickHouse } from '@quazex/nestjs-clickhouse';
 
 @Injectable()
 export class AppBootstrap implements OnApplicationShutdown {
-    constructor(@InjectClickHouse() private readonly clickHouseClient: ClickHouseClient) {}
+    constructor(@InjectClickHouse() private readonly client: ClickHouseClient) {}
 
     public async onApplicationShutdown(): Promise<void> {
-        await this.clickHouseClient.close();
+        await this.client.close();
     }
 }
 ```
