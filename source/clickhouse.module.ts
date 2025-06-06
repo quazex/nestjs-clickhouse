@@ -6,9 +6,9 @@ import { ClickHouseProviders } from './clickhouse.providers';
 @Global()
 @Module({})
 export class ClickHouseModule {
-    public static forRoot({ name, ...options }: ClickHouseClientConfigOptions & { name?: string }): DynamicModule {
-        const optionsProvider = ClickHouseProviders.getOptions(options, name);
-        const clientProvider = ClickHouseProviders.getClient(name);
+    public static forRoot(options: ClickHouseClientConfigOptions): DynamicModule {
+        const optionsProvider = ClickHouseProviders.getOptions(options);
+        const clientProvider = ClickHouseProviders.getClient();
 
         const dynamicModule: DynamicModule = {
             module: ClickHouseModule,
@@ -26,7 +26,7 @@ export class ClickHouseModule {
 
     public static forRootAsync(asyncOptions: ClickHouseAsyncOptions): DynamicModule {
         const optionsProvider = ClickHouseProviders.getAsyncOptions(asyncOptions);
-        const clientProvider = ClickHouseProviders.getClient(asyncOptions.name);
+        const clientProvider = ClickHouseProviders.getClient();
 
         const dynamicModule: DynamicModule = {
             module: ClickHouseModule,

@@ -11,15 +11,11 @@ describe('ClickHouse > E2E', () => {
     afterAll(tModule.close.bind(tModule));
 
     test('Check connection', async() => {
-        const service = tModule.getService();
-        const isHealth = await service.ping();
-
+        const isHealth = await tModule.service.ping();
         expect(isHealth).toBe(true);
     });
 
     test('Check write/read operations', async() => {
-        const service = tModule.getService();
-
         const total = faker.number.int({ min: 10, max: 20 });
 
         const faked = Array(total).fill({}).map<TestingData>(() => ({
@@ -28,8 +24,8 @@ describe('ClickHouse > E2E', () => {
             updated: DateTime.utc().toFormat('yyyy-MM-dd HH:mm:ss'),
         }));
 
-        await service.write(faked);
-        const reply = await service.read();
+        await tModule.service.write(faked);
+        const reply = await tModule.service.read();
 
         expect(reply).toBeDefined();
         expect(reply.length).toBe(faked.length);

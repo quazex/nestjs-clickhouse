@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { ClickHouseUtilities } from './clickhouse.utilities';
+import { ClickHouseTokens } from './clickhouse.tokens';
 
-export const InjectClickHouse = (name?: string): ReturnType<typeof Inject> => {
-    const token = ClickHouseUtilities.getClientToken(name);
+export const InjectClickHouse = (): ReturnType<typeof Inject> => {
+    const token = ClickHouseTokens.getClient();
     return Inject(token);
 };
