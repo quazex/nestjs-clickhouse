@@ -5,7 +5,7 @@
         "url": "git://github.com/quazex/nestjs-clickhouse.git"
     },
     "description": "NestJS module for ClickHouse client",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "author": "Alexander Smirnov",
     "license": "MIT",
     "engines": {
