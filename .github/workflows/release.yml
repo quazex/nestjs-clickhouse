@@ -30,5 +30,8 @@ jobs:
       - name: Install Deps
         run: npm ci
 
+      - name: Build module
+        run: npm run build:compile
+
       - name: Release
         run: npm publish --provenance --access public
