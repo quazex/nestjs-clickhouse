@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   check:
     name: Check
@@ -27,9 +24,9 @@ jobs:
           key: docker-${{ runner.os }}
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
 
       - run: npm ci
       - run: npm run dev:check

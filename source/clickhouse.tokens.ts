@@ -1,9 +1,4 @@
-export class ClickHouseTokens {
-    public static getOptions(): string {
-        return String('clickhouse_module_options');
-    }
-
-    public static getClient(): string {
-        return String('clickhouse_module_client');
-    }
+export enum ClickHouseTokens {
+  OPTIONS = 'clickhouse_module_options',
+  CLIENT = 'clickhouse_module_client',
 }
